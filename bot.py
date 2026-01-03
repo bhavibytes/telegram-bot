@@ -4,14 +4,14 @@ from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
-    ContextTypes,
+    ContextTypes
 )
 from dotenv import load_dotenv
 
 load_dotenv()
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-RENDER_URL = "https://cyber-rakshak-telegram-bot.onrender.com"
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+RENDER_EXTERNAL_URL = os.environ.get("RENDER_EXTERNAL_URL")
 
 # ---------- KEYBOARD ----------
 def main_menu():
@@ -33,10 +33,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    await query.message.reply_text("⚙️ Feature coming soon")
+    await query.message.reply_text("Feature coming soon")
 
 # ---------- MAIN ----------
 def main():
+    if not BOT_TOKEN or not RENDER_EXTERNAL_URL:
+        raise ValueError("BOT_TOKEN or RENDER_EXTERNAL_URL is missing")
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -44,12 +47,16 @@ def main():
 
     PORT = int(os.environ.get("PORT", 10000))
 
+    webhook_url = f"{RENDER_EXTERNAL_URL}/{BOT_TOKEN}"
+
     app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         url_path=BOT_TOKEN,
-        webhook_url=f"{RENDER_URL}/{BOT_TOKEN}",
+        webhook_url=webhook_url
     )
+
+    print("✅ Bot running with webhook:", webhook_url)
 
 if __name__ == "__main__":
     main()
