@@ -1,62 +1,29 @@
 import os
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    CallbackQueryHandler,
-    ContextTypes
-)
+import telebot
 from dotenv import load_dotenv
 
 load_dotenv()
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-RENDER_EXTERNAL_URL = os.environ.get("RENDER_EXTERNAL_URL")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# ---------- KEYBOARD ----------
-def main_menu():
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🛑 Report Cyber Crime", callback_data="report")],
-        [InlineKeyboardButton("🚨 Scam Alerts", callback_data="alerts")],
-        [InlineKeyboardButton("🧠 Scam Checker", callback_data="scam_check")],
-        [InlineKeyboardButton("📞 Emergency Help", callback_data="emergency")],
-        [InlineKeyboardButton("🌐 Visit Website", url="https://cyberrakshak-7284e.web.app")]
-    ])
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN missing")
 
-# ---------- HANDLERS ----------
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🛡️ Welcome to Cyber Rakshak\nYour cyber safety assistant",
-        reply_markup=main_menu()
+bot = telebot.TeleBot(BOT_TOKEN)
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(
+        message,
+        "🛡️ Cyber Rakshak Bot is LIVE!\n\nSend any message to test."
     )
 
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    await query.message.reply_text("Feature coming soon")
 
-# ---------- MAIN ----------
-def main():
-    if not BOT_TOKEN or not RENDER_EXTERNAL_URL:
-        raise ValueError("BOT_TOKEN or RENDER_EXTERNAL_URL is missing")
+@bot.message_handler(func=lambda message: True)
+def echo(message):
+    bot.reply_to(message, f"✅ You said: {message.text}")
 
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button_handler))
-
-    PORT = int(os.environ.get("PORT", 10000))
-
-    webhook_url = f"{RENDER_EXTERNAL_URL}/{BOT_TOKEN}"
-
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=BOT_TOKEN,
-        webhook_url=webhook_url
-    )
-
-    print("✅ Bot running with webhook:", webhook_url)
-
-if __name__ == "__main__":
-    main()
+print("🤖 Bot running...")
+bot.infinity_polling()
