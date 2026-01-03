@@ -12,7 +12,6 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# ---------- KEYBOARD ----------
 def main_menu():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("🛑 Report Cyber Crime", callback_data="report")],
@@ -22,28 +21,25 @@ def main_menu():
         [InlineKeyboardButton("🌐 Visit Website", url="https://cyberrakshak-7284e.web.app")]
     ])
 
-# ---------- HANDLERS ----------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🛡️ Welcome to *Cyber Rakshak*\nYour cyber safety assistant",
-        reply_markup=main_menu(),
-        parse_mode="Markdown"
+        "🛡️ Welcome to Cyber Rakshak\nYour cyber safety assistant",
+        reply_markup=main_menu()
     )
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    await query.message.reply_text("⚙️ Feature coming soon")
 
-    await query.message.reply_text("🚧 Feature coming soon!")
-
-# ---------- MAIN ----------
 def main():
+    print("🤖 Cyber Rakshak Bot is starting...")
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
 
-    print("🤖 Cyber Rakshak Bot is running...")
     app.run_polling()
 
 if __name__ == "__main__":
