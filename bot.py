@@ -4,16 +4,13 @@ from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
-    MessageHandler,
     ContextTypes,
-    filters
 )
 from dotenv import load_dotenv
 
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("https://cyber-rakshak-telegram-bot.onrender.com")  # Render URL
 
 # ---------- KEYBOARD ----------
 def main_menu():
@@ -28,14 +25,16 @@ def main_menu():
 # ---------- HANDLERS ----------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🛡️ Welcome to Cyber Rakshak\nYour cyber safety assistant",
-        reply_markup=main_menu()
+        "🛡️ Welcome to *Cyber Rakshak*\nYour cyber safety assistant",
+        reply_markup=main_menu(),
+        parse_mode="Markdown"
     )
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    q = update.callback_query
-    await q.answer()
-    await q.message.reply_text("Feature coming soon")
+    query = update.callback_query
+    await query.answer()
+
+    await query.message.reply_text("🚧 Feature coming soon!")
 
 # ---------- MAIN ----------
 def main():
@@ -44,14 +43,8 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
 
-    PORT = int(os.environ.get("PORT", 10000))
-
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=BOT_TOKEN,
-        webhook_url=f"{https://cyber-rakshak-telegram-bot.onrender.com}/{BOT_TOKEN}"
-    )
+    print("🤖 Cyber Rakshak Bot is running...")
+    app.run_polling()
 
 if __name__ == "__main__":
     main()
