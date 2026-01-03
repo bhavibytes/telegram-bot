@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Render URL
+WEBHOOK_URL = os.getenv("https://cyber-rakshak-telegram-bot.onrender.com")  # Render URL
 
 # ---------- KEYBOARD ----------
 def main_menu():
@@ -22,7 +22,7 @@ def main_menu():
         [InlineKeyboardButton("🚨 Scam Alerts", callback_data="alerts")],
         [InlineKeyboardButton("🧠 Scam Checker", callback_data="scam_check")],
         [InlineKeyboardButton("📞 Emergency Help", callback_data="emergency")],
-        [InlineKeyboardButton("🌐 Visit Website", url="https://your-firebase-site.web.app")]
+        [InlineKeyboardButton("🌐 Visit Website", url="https://cyberrakshak-7284e.web.app")]
     ])
 
 # ---------- HANDLERS ----------
@@ -50,7 +50,7 @@ def main():
         listen="0.0.0.0",
         port=PORT,
         url_path=BOT_TOKEN,
-        webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}"
+        webhook_url=f"{https://cyber-rakshak-telegram-bot.onrender.com}/{BOT_TOKEN}"
     )
 
 if __name__ == "__main__":
